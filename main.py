@@ -12,4 +12,4 @@ if __name__ == "__main__":
     data_in = sys.argv[1]
     key_in = sys.argv[2]
 
-    encrypter_xor(string=data_in, key=key_in)
+    print(encrypter_xor(string=data_in, key=key_in))
