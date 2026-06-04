@@ -1,4 +1,3 @@
-from encryption.encrypt_single import encrypt_single_xor
 from encryption.encrypt_xor_encryption import encrypt_xor_encryption
 
 
@@ -20,6 +19,7 @@ class XORFlattener:
         """
         binary_strings = XORFlattener._to_binary_strings(nested_bits)
         return "".join(chr(int(b, 2)) for b in binary_strings)
+
 
 def encrypter_xor(string: str, key: str) -> str:
     return XORFlattener.to_full_string(encrypt_xor_encryption(string, key))
