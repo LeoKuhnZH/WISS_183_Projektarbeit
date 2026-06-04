@@ -14,7 +14,7 @@ class XORFlattener:
     def to_full_string(nested_bits: list[list[int]]) -> str:
         """
         Directly converts the nested bits back into a human-readable string.
-        Note: If you XOR'd every char with every key char, this will
+        Note: If you Xor every char with every key char, this will
         produce a string of length (len(string) * len(key)).
         """
         binary_strings = XORFlattener._to_binary_strings(nested_bits)
