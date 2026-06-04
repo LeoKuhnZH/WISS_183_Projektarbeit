@@ -37,8 +37,8 @@ def decode(code):
 
 if __name__ == "__main__":
     print("0/1-Code Übersetzer")
-    print("1: Text → Code")
-    print("2: Code → Text")
+    print("1: Text -> Code")
+    print("2: Code -> Text")
 
     choice = input("Option (1/2): ").strip()
 
