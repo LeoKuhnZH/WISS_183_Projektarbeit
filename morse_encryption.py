@@ -1,19 +1,4 @@
-morse = {
-'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
-    'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
-    'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
-    'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
-    'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--',
-    'Z': '--..',
-    '0': '-----', '1': '.----', '2': '..---', '3': '...--',
-    '4': '....-', '5': '.....', '6': '-....', '7': '--...',
-    '8': '---..', '9': '----.',
-    '.': '.-.-.-', ',': '--..--', '?': '..--..', "'": '.----.',
-    '!': '-.-.--', '/': '-..-.', '(': '-.--.', ')': '-.--.-',
-    '&': '.-...', ':': '---...', ';': '-.-.-.', '=': '-...-',
-    '+': '.-.-.', '-': '-....-', '_': '..--.-', '"': '.-..-.',
-    '$': '...-..-', '@': '.--.-.', ' ': '/'  # Space as '/'
-}
+#Encrypt Festlegen
 encrypt ={
 'A': '01', 'B': '1000', 'C': '1010', 'D': '100', 'E': '0',
     'F': '0010', 'G': '110', 'H': '0000', 'I': '00', 'J': '0111',
@@ -30,3 +15,46 @@ encrypt ={
     '+': '01010', '-': '100001', '_': '001101', '"': '010010',
     '$': '0001001', '@': '011010', ' ': '/'  # Space as '/'
 }
+# Reverse mapping for decoding
+decrypt = {v: k for k, v in encrypt.items()}
+
+
+def encode(text):
+    """Wandelt Text in 0/1-Code um."""
+    try:
+        return ' '.join(encrypt[char] for char in text.upper())
+    except KeyError as e:
+        raise ValueError(f"Zeichen '{e.args[0]}' wird nicht unterstützt.")
+
+
+def decode(code):
+    """Wandelt 0/1-Code in Text um."""
+    try:
+        return ''.join(decrypt[symbol] for symbol in code.split(' '))
+    except KeyError as e:
+        raise ValueError(f"Code '{e.args[0]}' ist ungültig.")
+
+
+if __name__ == "__main__":
+    print("0/1-Code Übersetzer")
+    print("1: Text → Code")
+    print("2: Code → Text")
+
+    choice = input("Option (1/2): ").strip()
+
+    if choice == '1':
+        text = input("Text eingeben: ")
+        try:
+            print("Code:", encode(text))
+        except ValueError as err:
+            print("Fehler:", err)
+
+    elif choice == '2':
+        code = input("Code eingeben (Leerzeichen zwischen Zeichen, '/' für Leerzeichen): ")
+        try:
+            print("Text:", decode(code))
+        except ValueError as err:
+            print("Fehler:", err)
+
+    else:
+        print("Ungültige Auswahl.")
