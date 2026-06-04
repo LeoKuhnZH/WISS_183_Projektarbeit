@@ -2,7 +2,7 @@
 import os
 import sys
 
-from encryption.encryption import encrypter_xor
+from xor_encryption.encryption import encrypter_xor
 
 if __name__ == "__main__":
     # Check if the user provided enough arguments

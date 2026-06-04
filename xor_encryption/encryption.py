@@ -1,4 +1,4 @@
-from encryption.encrypt_xor_encryption import encrypt_xor_encryption
+from xor_encryption.encrypt_xor_encryption import encrypt_xor_encryption
 
 
 class XORFlattener:
