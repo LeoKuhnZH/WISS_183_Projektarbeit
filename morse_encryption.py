@@ -34,7 +34,7 @@ def decode(code):
     except KeyError as e:
         raise ValueError(f"Code '{e.args[0]}' ist ungültig.")
 
-
+#Funktion Audio
 def code_to_audio(code):
     print("Audio würde erzeugt werden:")
     print(code)
