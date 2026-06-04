@@ -1,5 +1,7 @@
 from functools import reduce
+
 from encryption.make_binary_char import make_binary_char
+
 
 def encrypt_single_xor(string: str, key: str) -> list[int]:
     if not string or not key:
