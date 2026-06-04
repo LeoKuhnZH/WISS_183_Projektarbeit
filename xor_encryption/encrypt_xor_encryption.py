@@ -1,4 +1,4 @@
-from encryption.encrypt_single import encrypt_single_xor
+from xor_encryption.encrypt_single import encrypt_single_xor
 
 
 def encrypt_xor_encryption(string: str, key: str) -> list[list[int]]:
