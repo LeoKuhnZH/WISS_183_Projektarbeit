@@ -35,6 +35,11 @@ def decode(code):
         raise ValueError(f"Code '{e.args[0]}' ist ungültig.")
 
 
+def code_to_audio(code):
+    print("Audio würde erzeugt werden:")
+    print(code)
+
+
 if __name__ == "__main__":
     print("0/1-Code Übersetzer")
     print("1: Text -> Code")
@@ -57,6 +62,19 @@ if __name__ == "__main__":
             print("Text:", decode(code))
         except ValueError as err:
             print("Fehler:", err)
+
+    elif choice == '3':
+
+        text = input("Text eingeben:")
+
+        try:
+            code = encode(text)
+            print("Code:", code)
+
+            code_to_audio(code)
+        except ValueError as err:
+            print("Fehler:", err)
+
 
     else:
         print("Ungültige Auswahl.")
