@@ -15,7 +15,7 @@ encrypt ={
     '+': '01010', '-': '100001', '_': '001101', '"': '010010',
     '$': '0001001', '@': '011010', ' ': '/'  # Space as '/'
 }
-# Reverse mapping for decoding
+# Funktion
 decrypt = {v: k for k, v in encrypt.items()}
 
 
