@@ -20,7 +20,7 @@ decrypt = {v: k for k, v in encrypt.items()}
 
 
 def encode(text):
-    """Wandelt Text in 0/1-Code um."""
+    #Wandelt Text in 0/1-Code um.
     try:
         return ' '.join(encrypt[char] for char in text.upper())
     except KeyError as e:
@@ -28,7 +28,7 @@ def encode(text):
 
 
 def decode(code):
-    """Wandelt 0/1-Code in Text um."""
+    #Wandelt 0/1-Code in Text um."""
     try:
         return ''.join(decrypt[symbol] for symbol in code.split(' '))
     except KeyError as e:
