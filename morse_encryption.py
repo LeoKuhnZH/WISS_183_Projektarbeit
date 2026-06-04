@@ -39,6 +39,8 @@ if __name__ == "__main__":
     print("0/1-Code Übersetzer")
     print("1: Text -> Code")
     print("2: Code -> Text")
+    #Versuch audio
+    print("3: Code -> Audio")
 
     choice = input("Option (1/2): ").strip()
 
