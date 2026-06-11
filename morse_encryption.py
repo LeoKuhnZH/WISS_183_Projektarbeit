@@ -30,7 +30,7 @@ SAMPLE_RATE = 44100
 FREQ_0 = [440, 523, 659]
 FREQ_1 = [392, 587, 784]
 
-BIT_TIME = 0.1
+BIT_TIME = 1.5
 
 #Encod Decod
 
@@ -66,6 +66,7 @@ def tone(freq, duration):
     return np.sin(2 * np.pi * freq * t)
 
 def silence(duration):
+    return np.zeros(int(SAMPLE_RATE * duration))
     """
     Erzeugt Stille.
     """
@@ -85,16 +86,18 @@ def code_to_audio(code, filename="output.wav"):
         if char == "0":
             freq = random.choice(FREQ_0)
             audio.extend(tone(freq, BIT_TIME))
+            audio.extend(silence(0.02))
 
         elif char == "1":
             freq = random.choice(FREQ_1)
             audio.extend(tone(freq, BIT_TIME))
+            audio.extend(silence(0.02))
 
         elif char == " ":
-            audio.extend(silence(0.1))
+            audio.extend(silence(0.08))
 
         elif char == "/":
-            audio.extend(silence(0.3))
+            audio.extend(silence(0.15))
 
     audio = np.array(audio)
 
