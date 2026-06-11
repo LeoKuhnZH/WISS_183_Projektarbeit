@@ -1,5 +1,6 @@
 
 def encrypt_single_caesar(char: str, shift: int) -> str:
+    #leer = Error
     if not char:
         raise IndexError
 
@@ -9,5 +10,9 @@ def encrypt_single_caesar(char: str, shift: int) -> str:
         base = ord("a")
     else:
         return char
+    #Gross- und Kleinbuchstaben werden getrennt.
 
+    
     return chr((ord(char) - base + shift) % 26 + base)
+
+
