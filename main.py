@@ -2,7 +2,7 @@
 import os
 import sys
 
-from caesar_encryption.encryption import caesar_decrypt, caesar_encrypt
+from caesar_encryption.encrypt_caesar_encryption import caesar_decrypt, caesar_encrypt
 from xor_encryption.encryption import encrypter_xor
 
 
