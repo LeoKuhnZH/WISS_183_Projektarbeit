@@ -1,4 +1,10 @@
+import wave
+
+import numpy as np
+import random
+
 #Encrypt Festlegen
+
 encrypt ={
 'A': '01', 'B': '1000', 'C': '1010', 'D': '100', 'E': '0',
     'F': '0010', 'G': '110', 'H': '0000', 'I': '00', 'J': '0111',
@@ -18,6 +24,16 @@ encrypt ={
 # Funktion
 decrypt = {v: k for k, v in encrypt.items()}
 
+#Audio Part 1
+SAMPLE_RATE = 44100
+
+FREQ_0 = [440, 523, 659]
+FREQ_1 = [392, 587, 784]
+
+BIT_TIME = 0.1
+
+#Encod Decod
+
 
 def encode(text):
     #Wandelt Text in 0/1-Code um.
@@ -35,9 +51,70 @@ def decode(code):
         raise ValueError(f"Code '{e.args[0]}' ist ungültig.")
 
 #Funktion Audio
-def code_to_audio(code):
-    print("Audio würde erzeugt werden:")
-    print(code)
+
+def tone(freq, duration):
+    """
+    Erzeugt einen Sinuston.
+    """
+    t = np.linspace(
+        0,
+        duration,
+        int(SAMPLE_RATE * duration),
+        False
+    )
+
+    return np.sin(2 * np.pi * freq * t)
+
+def silence(duration):
+    """
+    Erzeugt Stille.
+    """
+    return np.zeros(
+        int(SAMPLE_RATE * duration)
+    )
+
+def code_to_audio(code, filename="output.wav"):
+    """
+    Wandelt 0/1-Code in eine WAV-Datei um.
+    """
+
+    audio = []
+
+    for char in code:
+
+        if char == "0":
+            freq = random.choice(FREQ_0)
+            audio.extend(tone(freq, BIT_TIME))
+
+        elif char == "1":
+            freq = random.choice(FREQ_1)
+            audio.extend(tone(freq, BIT_TIME))
+
+        elif char == " ":
+            audio.extend(silence(0.1))
+
+        elif char == "/":
+            audio.extend(silence(0.3))
+
+    audio = np.array(audio)
+
+    # Für WAV-Datei skalieren
+    audio = (
+        audio * 32767
+    ).astype(np.int16)
+
+    with wave.open(filename, "w") as wav:
+
+        wav.setnchannels(1)      # Mono
+        wav.setsampwidth(2)      # 16 Bit
+        wav.setframerate(SAMPLE_RATE)
+
+        wav.writeframes(
+            audio.tobytes()
+        )
+
+    print(f"WAV gespeichert als: {filename}")
+
 
 
 if __name__ == "__main__":
