@@ -106,7 +106,7 @@ def code_to_audio(code, freq0, freq1, filename="output.wav"):
             audio.extend(silence(0.08))
 
         elif char == "/":
-            audio.extend(silence(0.15))
+            audio.extend(silence(0.08))
 
     audio = np.array(audio)
 
