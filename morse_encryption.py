@@ -30,7 +30,16 @@ SAMPLE_RATE = 44100
 FREQ_0 = [440, 523, 659]
 FREQ_1 = [392, 587, 784]
 
-BIT_TIME = 1.5
+#Neuer Part audio Schlüssel
+def create_frequencies(key):
+    random.seed(key)
+
+    freq0 = random.sample(range(300, 501), 3)
+    freq1 = random.sample(range(600, 901), 3)
+
+    return freq0, freq1
+
+BIT_TIME = 0.8
 
 #Encod Decod
 
@@ -74,7 +83,7 @@ def silence(duration):
         int(SAMPLE_RATE * duration)
     )
 
-def code_to_audio(code, filename="output.wav"):
+def code_to_audio(code, freq0, freq1, filename="output.wav"):
     """
     Wandelt 0/1-Code in eine WAV-Datei um.
     """
@@ -84,12 +93,12 @@ def code_to_audio(code, filename="output.wav"):
     for char in code:
 
         if char == "0":
-            freq = random.choice(FREQ_0)
+            freq = random.choice(freq0)
             audio.extend(tone(freq, BIT_TIME))
             audio.extend(silence(0.02))
 
         elif char == "1":
-            freq = random.choice(FREQ_1)
+            freq = random.choice(freq1)
             audio.extend(tone(freq, BIT_TIME))
             audio.extend(silence(0.02))
 
@@ -143,16 +152,36 @@ if __name__ == "__main__":
         except ValueError as err:
             print("Fehler:", err)
 
+
     elif choice == '3':
 
-        text = input("Text eingeben:")
+        text = input("Text eingeben: ")
+
+        key = input("Schlüssel: ")
 
         try:
-            code = encode(text)
-            print("Code:", code)
 
-            code_to_audio(code)
+            code = encode(text)
+
+            freq0, freq1 = create_frequencies(key)
+
+            print("Verwendete Frequenzen für 0:", freq0)
+
+            print("Verwendete Frequenzen für 1:", freq1)
+
+            code_to_audio(
+
+                code,
+
+                freq0,
+
+                freq1
+
+            )
+
+
         except ValueError as err:
+
             print("Fehler:", err)
 
 
