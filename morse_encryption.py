@@ -75,13 +75,8 @@ def tone(freq, duration):
     return np.sin(2 * np.pi * freq * t)
 
 def silence(duration):
+    """Erzeugt Stille."""
     return np.zeros(int(SAMPLE_RATE * duration))
-    """
-    Erzeugt Stille.
-    """
-    return np.zeros(
-        int(SAMPLE_RATE * duration)
-    )
 
 def code_to_audio(code, freq0, freq1, filename="output.wav"):
     """
@@ -103,10 +98,10 @@ def code_to_audio(code, freq0, freq1, filename="output.wav"):
             audio.extend(silence(0.02))
 
         elif char == " ":
-            audio.extend(silence(0.08))
+            audio.extend(silence(0.30))
 
         elif char == "/":
-            audio.extend(silence(0.08))
+            audio.extend(silence(0.80))
 
     audio = np.array(audio)
 
@@ -127,16 +122,99 @@ def code_to_audio(code, freq0, freq1, filename="output.wav"):
 
     print(f"WAV gespeichert als: {filename}")
 
+    #Option 4 Audio zu Code
+def audio_to_code(filename, freq0, freq1):
 
+    with wave.open(filename, "r") as wav:
+        frames = wav.readframes(wav.getnframes())
+        audio = np.frombuffer(frames, dtype=np.int16)
 
+    audio = audio.astype(np.float32) / 32767
+
+    def classify_tone(chunk):
+        fft = np.fft.rfft(chunk)
+        freqs = np.fft.rfftfreq(len(chunk), 1 / SAMPLE_RATE)
+        peak_freq = freqs[np.argmax(np.abs(fft))]
+
+        dist0 = min(abs(peak_freq - f) for f in freq0)
+        dist1 = min(abs(peak_freq - f) for f in freq1)
+
+        if abs(dist0 - dist1) < 20:
+            return None
+        return "0" if dist0 < dist1 else "1"
+
+    block_size = int(SAMPLE_RATE * 0.02)   # 20ms Analysefenster
+    block_duration = block_size / SAMPLE_RATE
+
+    threshold = 0.04
+    letter_gap = 0.20
+    word_gap = 0.55
+
+    bits = []
+    current_bit = ""
+    silence_duration = 0.0
+    tone_chunks = []
+    state = "silence"
+
+    for i in range(0, len(audio), block_size):
+        chunk = audio[i:i + block_size]
+        if len(chunk) == 0:
+            continue
+
+        amplitude = np.max(np.abs(chunk))
+        is_tone = amplitude >= threshold
+
+        if is_tone:
+            if state == "silence":
+                if silence_duration >= word_gap:
+                    if current_bit != "":
+                        bits.append(current_bit)
+                        current_bit = ""
+                    bits.append("/")
+                elif silence_duration >= letter_gap:
+                    if current_bit != "":
+                        bits.append(current_bit)
+                        current_bit = ""
+                silence_duration = 0.0
+                tone_chunks = []
+            tone_chunks.append(chunk)
+            state = "tone"
+            continue
+
+        # silence
+        if state == "tone" and tone_chunks:
+            tone_chunk = np.concatenate(tone_chunks)
+            bit = classify_tone(tone_chunk)
+            if bit is not None:
+                current_bit += bit
+            tone_chunks = []
+
+        silence_duration += block_duration
+        state = "silence"
+
+    if state == "tone" and tone_chunks:
+        tone_chunk = np.concatenate(tone_chunks)
+        bit = classify_tone(tone_chunk)
+        if bit is not None:
+            current_bit += bit
+
+    if current_bit != "":
+        bits.append(current_bit)
+
+    return " ".join(bits)
+#Main Programm
 if __name__ == "__main__":
     print("0/1-Code Übersetzer")
+    #Text -> Code
     print("1: Text -> Code")
+    #Code -> Text
     print("2: Code -> Text")
-    #Versuch audio
+    #Code -> audio
     print("3: Code -> Audio")
+    #Audio -> Code -> Text
+    print("4: Audio -> Text")
 
-    choice = input("Option (1/2): ").strip()
+    choice = input("Option (1/2/3/4): ").strip()
 
     if choice == '1':
         text = input("Text eingeben: ")
@@ -152,7 +230,7 @@ if __name__ == "__main__":
         except ValueError as err:
             print("Fehler:", err)
 
-
+     #Option 3 Text zu Audio
     elif choice == '3':
 
         text = input("Text eingeben: ")
@@ -164,6 +242,7 @@ if __name__ == "__main__":
             code = encode(text)
 
             freq0, freq1 = create_frequencies(key)
+            #Ausklammern Falls nötig für zwischen schritt
 
             print("Verwendete Frequenzen für 0:", freq0)
 
@@ -182,6 +261,23 @@ if __name__ == "__main__":
 
         except ValueError as err:
 
+            print("Fehler:", err)
+
+    elif choice == '4':
+        filename = input("WAV-Datei: ")
+        key = input("Schlüssel: ")
+
+        try:
+            freq0, freq1 = create_frequencies(key)
+
+            code = audio_to_code(filename, freq0, freq1)
+
+            print("Raw Code:", code)
+
+            text = decode(code)
+            print("Text:", text)
+
+        except Exception as err:
             print("Fehler:", err)
 
 
