@@ -1,7 +1,9 @@
+import random
 import wave
 
 import numpy as np
-import random
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
 #Encrypt Festlegen
 
@@ -202,84 +204,110 @@ def audio_to_code(filename, freq0, freq1):
         bits.append(current_bit)
 
     return " ".join(bits)
-#Main Programm
-if __name__ == "__main__":
-    print("0/1-Code Übersetzer")
-    #Text -> Code
-    print("1: Text -> Code")
-    #Code -> Text
-    print("2: Code -> Text")
-    #Code -> audio
-    print("3: Code -> Audio")
-    #Audio -> Code -> Text
-    print("4: Audio -> Text")
+class MorseGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Morse Encryption Prototype")
+        self.root.geometry("700x450")
 
-    choice = input("Option (1/2/3/4): ").strip()
+        tk.Label(root, text="Eingabe (Text oder Code)", anchor="w").pack(fill="x", padx=10, pady=(10, 0))
+        self.input_field = tk.Text(root, height=8)
+        self.input_field.pack(fill="both", expand=True, padx=10, pady=5)
 
-    if choice == '1':
-        text = input("Text eingeben: ")
+        tk.Label(root, text="Schlüssel für Audio", anchor="w").pack(fill="x", padx=10)
+        self.key_field = tk.Entry(root)
+        self.key_field.pack(fill="x", padx=10, pady=5)
+
+        button_frame = tk.Frame(root)
+        button_frame.pack(fill="x", padx=10, pady=8)
+
+        tk.Button(button_frame, text="Text -> Code", command=self.encode_text).pack(side="left", padx=5)
+        tk.Button(button_frame, text="Code -> Text", command=self.decode_text).pack(side="left", padx=5)
+        tk.Button(button_frame, text="Text -> Audio", command=self.text_to_audio).pack(side="left", padx=5)
+        tk.Button(button_frame, text="WAV hochladen", command=self.upload_audio).pack(side="left", padx=5)
+
+        tk.Label(root, text="Ergebnis", anchor="w").pack(fill="x", padx=10, pady=(10, 0))
+        self.output_field = tk.Text(root, height=8)
+        self.output_field.pack(fill="both", expand=True, padx=10, pady=5)
+
+    def _get_input_text(self):
+        return self.input_field.get("1.0", "end").strip()
+
+    def _set_output(self, text):
+        self.output_field.delete("1.0", "end")
+        self.output_field.insert("1.0", text)
+
+    def encode_text(self):
+        text = self._get_input_text()
+        if not text:
+            messagebox.showwarning("Eingabe fehlt", "Bitte gib einen Text ein.")
+            return
+
         try:
-            print("Code:", encode(text))
+            self._set_output(encode(text))
         except ValueError as err:
-            print("Fehler:", err)
+            messagebox.showerror("Fehler", str(err))
 
-    elif choice == '2':
-        code = input("Code eingeben (Leerzeichen zwischen Zeichen, '/' für Leerzeichen): ")
+    def decode_text(self):
+        code = self._get_input_text()
+        if not code:
+            messagebox.showwarning("Eingabe fehlt", "Bitte gib einen Morse-Code ein.")
+            return
+
         try:
-            print("Text:", decode(code))
+            self._set_output(decode(code))
         except ValueError as err:
-            print("Fehler:", err)
+            messagebox.showerror("Fehler", str(err))
 
-     #Option 3 Text zu Audio
-    elif choice == '3':
-
-        text = input("Text eingeben: ")
-
-        key = input("Schlüssel: ")
+    def text_to_audio(self):
+        text = self._get_input_text()
+        key = self.key_field.get().strip()
+        if not text:
+            messagebox.showwarning("Eingabe fehlt", "Bitte gib einen Text ein.")
+            return
+        if not key:
+            messagebox.showwarning("Schlüssel fehlt", "Bitte gib einen Schlüssel ein.")
+            return
 
         try:
-
             code = encode(text)
-
             freq0, freq1 = create_frequencies(key)
-            #Ausklammern Falls nötig für zwischen schritt
-
-            print("Verwendete Frequenzen für 0:", freq0)
-
-            print("Verwendete Frequenzen für 1:", freq1)
-
-            code_to_audio(
-
-                code,
-
-                freq0,
-
-                freq1
-
+            filename = filedialog.asksaveasfilename(
+                defaultextension=".wav",
+                initialfile="output.wav",
+                filetypes=[("WAV-Dateien", "*.wav")],
             )
+            if not filename:
+                return
 
-
+            code_to_audio(code, freq0, freq1, filename)
+            self._set_output(f"Code: {code}\n\nAudio gespeichert unter:\n{filename}")
+            messagebox.showinfo("Erfolg", f"Audio gespeichert unter:\n{filename}")
         except ValueError as err:
+            messagebox.showerror("Fehler", str(err))
+        except Exception as err:
+            messagebox.showerror("Fehler", str(err))
 
-            print("Fehler:", err)
+    def upload_audio(self):
+        key = self.key_field.get().strip()
+        if not key:
+            messagebox.showwarning("Schlüssel fehlt", "Bitte gib einen Schlüssel ein.")
+            return
 
-    elif choice == '4':
-        filename = input("WAV-Datei: ")
-        key = input("Schlüssel: ")
+        filename = filedialog.askopenfilename(filetypes=[("WAV-Dateien", "*.wav")])
+        if not filename:
+            return
 
         try:
             freq0, freq1 = create_frequencies(key)
-
             code = audio_to_code(filename, freq0, freq1)
-
-            print("Raw Code:", code)
-
             text = decode(code)
-            print("Text:", text)
-
+            self._set_output(f"Code: {code}\n\nText: {text}")
         except Exception as err:
-            print("Fehler:", err)
+            messagebox.showerror("Fehler", str(err))
 
 
-    else:
-        print("Ungültige Auswahl.")
+if __name__ == "__main__":
+    root = tk.Tk()
+    MorseGUI(root)
+    root.mainloop()
