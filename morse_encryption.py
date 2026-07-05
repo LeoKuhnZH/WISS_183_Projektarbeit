@@ -5,6 +5,8 @@ import numpy as np
 import tkinter as tk
 from tkinter import filedialog, messagebox
 
+# GUI-Import: tkinter
+
 #Encrypt Festlegen
 
 encrypt ={
@@ -206,18 +208,22 @@ def audio_to_code(filename, freq0, freq1):
     return " ".join(bits)
 class MorseGUI:
     def __init__(self, root):
+        # Hauptfenster erstellen und seine Größe festlegen.
         self.root = root
         self.root.title("Morse Encryption Prototype")
-        self.root.geometry("700x450")
+        self.root.geometry("700x500")
 
+        # Eingabebereich für Text oder Morse-Code.
         tk.Label(root, text="Eingabe (Text oder Code)", anchor="w").pack(fill="x", padx=10, pady=(10, 0))
         self.input_field = tk.Text(root, height=8)
         self.input_field.pack(fill="both", expand=True, padx=10, pady=5)
 
+        # Feld für den Audio-Schlüssel.
         tk.Label(root, text="Schlüssel für Audio", anchor="w").pack(fill="x", padx=10)
         self.key_field = tk.Entry(root)
         self.key_field.pack(fill="x", padx=10, pady=5)
 
+        # Buttons für die verschiedenen Aktionen.
         button_frame = tk.Frame(root)
         button_frame.pack(fill="x", padx=10, pady=8)
 
@@ -226,14 +232,17 @@ class MorseGUI:
         tk.Button(button_frame, text="Text -> Audio", command=self.text_to_audio).pack(side="left", padx=5)
         tk.Button(button_frame, text="WAV hochladen", command=self.upload_audio).pack(side="left", padx=5)
 
+        # Ausgabebereich für das Ergebnis.
         tk.Label(root, text="Ergebnis", anchor="w").pack(fill="x", padx=10, pady=(10, 0))
         self.output_field = tk.Text(root, height=8)
         self.output_field.pack(fill="both", expand=True, padx=10, pady=5)
 
     def _get_input_text(self):
+        # Liest den aktuellen Inhalt aus dem Eingabefeld aus.
         return self.input_field.get("1.0", "end").strip()
 
     def _set_output(self, text):
+        # Schreibt das Ergebnis in das Ausgabe-Feld.
         self.output_field.delete("1.0", "end")
         self.output_field.insert("1.0", text)
 
@@ -249,6 +258,7 @@ class MorseGUI:
             messagebox.showerror("Fehler", str(err))
 
     def decode_text(self):
+        # Wandelt den eingegebenen Morse-Code zurück in Klartext um.
         code = self._get_input_text()
         if not code:
             messagebox.showwarning("Eingabe fehlt", "Bitte gib einen Morse-Code ein.")
@@ -260,6 +270,7 @@ class MorseGUI:
             messagebox.showerror("Fehler", str(err))
 
     def text_to_audio(self):
+        # Erzeugt aus einem Text ein WAV-File und speichert es ab.
         text = self._get_input_text()
         key = self.key_field.get().strip()
         if not text:
@@ -289,6 +300,7 @@ class MorseGUI:
             messagebox.showerror("Fehler", str(err))
 
     def upload_audio(self):
+        # Lädt eine WAV-Datei hoch und wandelt sie wieder in Morse-Code/Text um.
         key = self.key_field.get().strip()
         if not key:
             messagebox.showwarning("Schlüssel fehlt", "Bitte gib einen Schlüssel ein.")
@@ -308,6 +320,7 @@ class MorseGUI:
 
 
 if __name__ == "__main__":
+    # Startet das Hauptfenster und hält die GUI offen.
     root = tk.Tk()
     MorseGUI(root)
     root.mainloop()
