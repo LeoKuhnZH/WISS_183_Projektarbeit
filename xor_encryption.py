@@ -4,7 +4,7 @@ from log_unit import logger, Severity
 
 class XOREncryption:
     @staticmethod
-    def make_binary_char(string: str) -> str:
+    def _make_binary_char(string: str) -> str:
         if len(string) >= 1:
             return f"{ord(string[0]):08b}"
         else:
@@ -12,7 +12,7 @@ class XOREncryption:
             return ""
 
     @staticmethod
-    def encrypt_single_xor(string: str, key: str) -> list[int]:
+    def _encrypt_single_xor(string: str, key: str) -> list[int]:
         if not string or not key:
             logger.log(message="String or key are empty", severity=Severity.ERROR)
             raise IndexError
@@ -22,14 +22,14 @@ class XOREncryption:
             lambda current_bits, next_key_bits: [
                 c ^ k for c, k in zip(current_bits, next_key_bits)
             ],
-            ([int(b) for b in XOREncryption.make_binary_char(k)] for k in key),
-            [int(b) for b in XOREncryption.make_binary_char(string[0])]
+            ([int(b) for b in XOREncryption._make_binary_char(k)] for k in key),
+            [int(b) for b in XOREncryption._make_binary_char(string[0])]
         )
 
     @staticmethod
-    def encrypt_xor_encryption(string: str, key: str) -> list[list[int]]:
+    def _encrypt_xor_encryption(string: str, key: str) -> list[list[int]]:
         logger.log("Beginning Encryption", Severity.INFO)
-        return [XOREncryption.encrypt_single_xor(cha, key) for cha in string]
+        return [XOREncryption._encrypt_single_xor(cha, key) for cha in string]
 
     @staticmethod
     def _to_binary_strings(nested_bits: list[list[int]]) -> list[str]:
@@ -54,4 +54,4 @@ class XOREncryption:
     @staticmethod
     def encrypter_xor(string: str, key: str) -> str:
         logger.log("Initializing Encryption", Severity.INFO)
-        return XOREncryption.to_full_string(XOREncryption.encrypt_xor_encryption(string, key))
+        return XOREncryption.to_full_string(XOREncryption._encrypt_xor_encryption(string, key))
