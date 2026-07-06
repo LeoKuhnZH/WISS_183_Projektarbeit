@@ -5,7 +5,7 @@ import sys
 from log_unit import logger
 from log_unit import Severity
 
-from xor_encryption.encryption import encrypter_xor
+from xor_encryption import XOREncryption
 
 def _find_string(input_string: str) -> str:
     logger.log(message="Initiated Program", severity=Severity.INFO)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
         if len(sys.argv) == 3:
             logger.log(message="Starting program without output file", severity=Severity.INFO)
-            print(encrypter_xor(string=data_in, key=key_in))
+            print(XOREncryption.encrypter_xor(string=data_in, key=key_in))
             logger.log(message="Program Execution finished", severity=Severity.INFO)
             logger.save_to_file()
             logger.clear()
@@ -51,7 +51,7 @@ if __name__ == "__main__":
             with open(output_path, "wb") as binary_file:
                 logger.log(message="writing to file", severity=Severity.INFO)
                 binary_file.write(
-                    encrypter_xor(string=data_in, key=key_in).encode("latin-1")
+                    XOREncryption.encrypter_xor(string=data_in, key=key_in).encode("latin-1")
                 )
                 logger.log(message="Program Execution finished", severity=Severity.INFO)
                 logger.save_to_file()
