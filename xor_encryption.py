@@ -41,7 +41,7 @@ class XOREncryption:
         return ["".join(map(str, byte_list)) for byte_list in nested_bits]
 
     @staticmethod
-    def to_full_string(nested_bits: list[list[int]]) -> str:
+    def _to_full_string(nested_bits: list[list[int]]) -> str:
         """
         Directly converts the nested bits back into a human-readable string.
         Note: If you Xor every char with every key char, this will
@@ -54,4 +54,4 @@ class XOREncryption:
     @staticmethod
     def encrypter_xor(string: str, key: str) -> str:
         logger.log("Initializing Encryption", Severity.INFO)
-        return XOREncryption.to_full_string(XOREncryption._encrypt_xor_encryption(string, key))
+        return XOREncryption._to_full_string(XOREncryption._encrypt_xor_encryption(string, key))
